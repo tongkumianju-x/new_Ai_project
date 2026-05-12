@@ -46,6 +46,11 @@ func mergeMessages(sourceIP net.IP, msgs []*mdns.Message) []*Asset {
 				st := strings.TrimSuffix(rr.Name, ".")
 				inst := strings.TrimSuffix(rr.Target, ".")
 				ptrInstances[st] = appendUnique(ptrInstances[st], inst)
+				// _services._dns-sd._udp.local 是 DNS-SD 元枚举，不属于业务资产，
+				// 既不应该列在 services 节段，也不应该出现在 answers 节段。
+				if strings.HasPrefix(st, "_services.") {
+					continue
+				}
 				if !contains(ptrAnswers, st) {
 					ptrAnswers = append(ptrAnswers, st)
 				}
