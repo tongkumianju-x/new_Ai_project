@@ -1,0 +1,85 @@
+[
+  {
+    "hostname": "zhangleideMacBook-Pro.local",
+    "ipv4": "127.0.0.1",
+    "ipv6": "::1",
+    "ttl": 10,
+    "vendor": "Apple",
+    "product": "Mac (AirPlay)",
+    "category": "apple-host",
+    "tags": [
+      "apple.airplay-mac",
+      "apple.companion-link",
+      "apple.raop"
+    ],
+    "services": [
+      {
+        "type": "raop",
+        "transport": "tcp",
+        "port": 7000,
+        "name": "BCD0745DA7FA@张磊的MacBook Pro",
+        "txt": [
+          "cn=0,1,2,3",
+          "da=true",
+          "et=0,3,5",
+          "ft=0x4A7FCFD5,0xB8174FDE",
+          "sf=0x204",
+          "md=0,1,2",
+          "am=MacBookPro18,1",
+          "pk=8e460c812bb5faaa24b075af4e43d33f13d20e8c40aae5790918835c1eb9485a",
+          "tp=UDP",
+          "vn=65537",
+          "vs=775.3.1",
+          "vv=0"
+        ],
+        "ttl": 10
+      },
+      {
+        "type": "airplay",
+        "transport": "tcp",
+        "port": 7000,
+        "name": "张磊的MacBook Pro",
+        "txt": [
+          "act=2",
+          "acl=0",
+          "deviceid=BC:D0:74:5D:A7:FA",
+          "fex=1c9/St5PF7g2IQQ",
+          "features=0x4A7FCFD5,0xB8174FDE",
+          "rsf=0x8",
+          "flags=0x204",
+          "gid=A12E85FA-4280-4D7B-831A-BE16CA66B771",
+          "igl=0",
+          "gcgl=0",
+          "model=MacBookPro18,1",
+          "at=4",
+          "protovers=1.1",
+          "pi=a9effd1b-62b0-42e7-85c6-1265c2151e52",
+          "psi=5D36254A-3DDE-4E9E-9D01-FE68F003830A",
+          "pk=8e460c812bb5faaa24b075af4e43d33f13d20e8c40aae5790918835c1eb9485a",
+          "srcvers=775.3.1"
+        ],
+        "ttl": 10
+      },
+      {
+        "type": "companion-link",
+        "transport": "tcp",
+        "port": 53593,
+        "name": "张磊的MacBook Pro",
+        "txt": [
+          "rpBA=AD:71:AF:0C:37:2E",
+          "rpAD=ca28240452db",
+          "rpFl=0x20000",
+          "rpHN=af78ee7abbe4",
+          "rpMac=0",
+          "rpVr=580.4"
+        ],
+        "ttl": 10
+      }
+    ],
+    "ptr_answers": [
+      "_raop._tcp.local",
+      "_airplay._tcp.local",
+      "_companion-link._tcp.local"
+    ]
+  }
+]

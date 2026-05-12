@@ -1,7 +1,9 @@
 .idea/
 .vscode/
+.workbuddy/
 *.test
 *.out
 mdnsscan
 mdnsreplay
 assets.json
+bin/
