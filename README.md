@@ -97,14 +97,14 @@ answers:
 6. **零拷贝/低分配**：CIDR 用迭代器逐个产 IP，避免 `/16` 网段一次性分配。
 7. **文档即合约**：每个文件首部注释说明该包的设计取舍，方便新人接手。
 
-## 6. 后续递进路线（我会按分支逐步推进）
+## 6. 后续递进路线（按分支逐步推进）
 
-- [ ] feature/mdns-scanner-init  ← **当前分支**（基础工程 + 协议 + 单播扫描 + 测试）
-- [ ] feature/mdns-multicast-iface  增强组播：按 `--iface` 选网卡，单播失败时自动回退
-- [ ] feature/mdns-fingerprint  指纹库：通过 TXT 关键字段识别厂商（QNAP/Synology/Apple/Bonjour-printer 等）
-- [ ] feature/mdns-rate-limit  并发限流 + 重试 + 抖动，让大网段扫描更稳
-- [ ] feature/mdns-output-csv-prom  增加 CSV / Prometheus 指标输出
-- [ ] feature/mdns-e2e  E2E：起本地 mDNS 模拟服务做集成测试
+- [x] feature/mdns-scanner-init — 基础工程 + 协议 + 单播扫描 + 测试 ✅ 已合并 main
+- [x] feature/mdns-fingerprint — **本分支** 厂商指纹库（QNAP/Synology/Apple/Chromecast/HomeKit/Printer 等）+ 自定义规则注入 ✅ 测试通过
+- [ ] feature/mdns-multicast-iface — 增强组播：按 `--iface` 选网卡，单播失败时自动回退
+- [ ] feature/mdns-rate-limit — 大网段并发限流 + 重试 + 抖动
+- [ ] feature/mdns-output-csv-prom — CSV / Prometheus 指标输出
+- [ ] feature/mdns-e2e — 起本地 mDNS mock 做集成测试
 
 ## 7. 测试
 
@@ -115,4 +115,6 @@ go test ./... -v
 当前覆盖：
 - `internal/mdns`：编解码往返 + 多记录类型（A/AAAA/SRV/TXT/PTR）合成报文解析
 - `internal/scanner`：端到端 banner 深度断言，覆盖 6 种典型 mDNS 服务
+- `internal/fingerprint`：QNAP/Synology/Apple/Chromecast 单元测试 + 优先级 + 自定义规则 + 端到端集成
 - `pkg/iprange`：端口表达式 + CIDR 迭代
+

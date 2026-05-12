@@ -141,8 +141,12 @@ func mergeMessages(sourceIP net.IP, msgs []*mdns.Message) []*Asset {
 				Instance:  shortInstance(inst),
 				TXT:       txtByInst[inst],
 				TTL:       info.ttl,
+				Target:    info.target,
 			}
 			a.Services = append(a.Services, sv)
+			if info.target != "" {
+				a.SRVTargets = appendUnique(a.SRVTargets, info.target)
+			}
 		}
 	}
 

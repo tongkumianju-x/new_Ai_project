@@ -40,6 +40,10 @@ type Options struct {
 	Multicast   bool          // 是否额外发起组播探测
 	Iface       string        // 组播探测使用的网卡
 	Verbose     bool
+
+	// FingerprintHook 在资产合并完成后调用，用于注入指纹识别等后处理。
+	// 设计为 hook 是为了避免 scanner 包反向依赖 fingerprint 包。
+	FingerprintHook func([]*Asset)
 }
 
 // Scanner 主扫描器
@@ -140,6 +144,11 @@ func (s *Scanner) Run(ctx context.Context) (*Store, error) {
 			}
 			a.Services = filtered
 		}
+	}
+
+	// 4) 指纹识别 hook
+	if s.opts.FingerprintHook != nil {
+		s.opts.FingerprintHook(store.All())
 	}
 
 	return store, nil
