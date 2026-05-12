@@ -33,6 +33,14 @@ func WriteText(w io.Writer, assets []*scanner.Asset) error {
 			fmt.Fprintln(w, "----")
 			fmt.Fprintln(w)
 		}
+		// 指纹摘要（若已识别）
+		if a.Vendor != "" || (a.Category != "" && a.Category != "unknown") {
+			fmt.Fprintf(w, "fingerprint: vendor=%s product=%s category=%s\n",
+				dashIfEmpty(a.Vendor), dashIfEmpty(a.Product), dashIfEmpty(a.Category))
+			if len(a.Tags) > 0 {
+				fmt.Fprintf(w, "tags: %s\n", strings.Join(a.Tags, ","))
+			}
+		}
 		fmt.Fprintln(w, "services:")
 		for _, s := range a.Services {
 			head := serviceHeader(s)
@@ -85,6 +93,13 @@ func emptyAsDash(s string) string {
 	return s
 }
 
+func dashIfEmpty(s string) string {
+	if s == "" {
+		return "-"
+	}
+	return s
+}
+
 // WriteJSON 输出 JSON 报告，便于下游消费。
 func WriteJSON(w io.Writer, assets []*scanner.Asset) error {
 	type serviceOut struct {
@@ -100,6 +115,10 @@ func WriteJSON(w io.Writer, assets []*scanner.Asset) error {
 		IPv4       string       `json:"ipv4,omitempty"`
 		IPv6       string       `json:"ipv6,omitempty"`
 		TTL        uint32       `json:"ttl,omitempty"`
+		Vendor     string       `json:"vendor,omitempty"`
+		Product    string       `json:"product,omitempty"`
+		Category   string       `json:"category,omitempty"`
+		Tags       []string     `json:"tags,omitempty"`
 		Services   []serviceOut `json:"services"`
 		PTRAnswers []string     `json:"ptr_answers,omitempty"`
 	}
@@ -108,6 +127,10 @@ func WriteJSON(w io.Writer, assets []*scanner.Asset) error {
 		ao := assetOut{
 			Hostname:   a.Hostname,
 			TTL:        a.TTL,
+			Vendor:     a.Vendor,
+			Product:    a.Product,
+			Category:   a.Category,
+			Tags:       a.Tags,
 			PTRAnswers: a.PTRAnswers,
 		}
 		if a.IPv4 != nil {

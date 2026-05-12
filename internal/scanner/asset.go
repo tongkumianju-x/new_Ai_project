@@ -18,6 +18,7 @@ type Service struct {
 	Instance  string   // SRV 实例名，对外展示为 Name=...
 	TXT       []string // 原始 TXT 键值对（按 "key=value" 形式存储）
 	TTL       uint32
+	Target    string   // SRV target 主机名，用于指纹识别
 }
 
 // Asset 表示一台被发现的主机。
@@ -29,6 +30,16 @@ type Asset struct {
 	Services []*Service
 	// PTR Answers 直接从响应里提取出来，用于 answers 段输出
 	PTRAnswers []string
+
+	// 指纹识别结果（由 fingerprint 引擎在扫描后填充；未识别时 Vendor=""）
+	Vendor   string
+	Product  string
+	Category string
+	Tags     []string // 多个命中规则的 RuleID
+
+	// SRV target（hostname 维度），供指纹识别 / 排错使用。
+	// 与 Services 一一对应是过度设计，这里取去重后的列表。
+	SRVTargets []string
 }
 
 // Key 用于在 store 中聚合资产：优先按 hostname，否则按 IP。
@@ -43,6 +54,45 @@ func (a *Asset) Key() string {
 		return a.IPv6.String()
 	}
 	return ""
+}
+
+// ============================================================
+//   适配 fingerprint.AssetLike 接口（依赖单向：scanner -> 无；
+//   fingerprint 定义接口，scanner 实现接口，cmd 层组装两者）
+// ============================================================
+
+// GetHostname 实现 fingerprint.AssetLike
+func (a *Asset) GetHostname() string { return a.Hostname }
+
+// GetServices 把 scanner.Service 转换为指纹引擎期望的 ServiceView。
+// 这里返回 interface{} 兼容的结构（在 cmd 层做实际适配）。
+func (a *Asset) ServiceSnapshot() []ServiceSnapshot {
+	out := make([]ServiceSnapshot, 0, len(a.Services))
+	for _, s := range a.Services {
+		out = append(out, ServiceSnapshot{
+			Type:      s.Type,
+			Transport: s.Transport,
+			Target:    s.Target,
+			TXT:       append([]string(nil), s.TXT...),
+		})
+	}
+	return out
+}
+
+// SetFingerprint 由 cmd 层在调用指纹引擎后写回。
+func (a *Asset) SetFingerprint(vendor, product, category string, tags []string) {
+	a.Vendor = vendor
+	a.Product = product
+	a.Category = category
+	a.Tags = tags
+}
+
+// ServiceSnapshot 是 Asset 暴露给上层的轻量服务快照（避免内部 *Service 被改）。
+type ServiceSnapshot struct {
+	Type      string
+	Transport string
+	Target    string
+	TXT       []string
 }
 
 // Store 是资产聚合容器，并发安全在 scanner 上层处理。
