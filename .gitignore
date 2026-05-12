@@ -1,0 +1,7 @@
+.idea/
+.vscode/
+*.test
+*.out
+mdnsscan
+mdnsreplay
+assets.json
